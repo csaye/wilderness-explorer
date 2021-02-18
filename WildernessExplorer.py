@@ -72,17 +72,29 @@ def draw():
 # initialize player
 player_x = 0; player_y = 0
 board[player_x][player_y] = 'p'
+can_move = True
 
-def move_player(x, y):
+def move_dir(direction):
+    if direction == 'u': move(player_x, player_y - 1)
+    elif direction == 'r': move(player_x + 1, player_y)
+    elif direction == 'd': move(player_x, player_y + 1)
+    elif direction == 'l': move(player_x - 1, player_y)
+
+def move(x, y):
+    global player_x, player_y, can_move
+    # return if cannot move
+    if not can_move: return
     # return if out of bounds
-    if x <= 0: return
-    elif x >= screen_x - 1: return
-    if y <= 0: return
-    elif y >= screen_y - 1: return
+    if x < 0: return
+    elif x > screen_x - 1: return
+    if y < 0: return
+    elif y > screen_y - 1: return
     # update board and player coordinates
     board[player_x][player_y] = ''
     player_x = x; player_y = y
     board[player_x][player_y] = 'p'
+    # update can move
+    can_move = False
 
 ### main ###
 
@@ -107,9 +119,23 @@ while True:
             pygame.quit()
             sys.exit()
 
+        # keys
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w or event.key == pygame.K_UP:
+                move_dir('u')
+            elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                move_dir('l')
+            elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                move_dir('d')
+            elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                move_dir('r')
+
     # update
     if frame % update == 0:
 
         # draw boards
         draw()
+
+        # reset player
+        can_move = True
     

@@ -15,8 +15,9 @@ update = 5
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
-green = (0, 255, 0)
+green = (0, 191, 31)
 blue = (0, 0, 255)
+brown = (127, 63, 63)
 
 ### screen ###
 
@@ -27,31 +28,61 @@ screen = pygame.display.set_mode(screen_size)
 # set caption
 pygame.display.set_caption('Wilderness Explorer')
 
-### board ###
+### boards ###
 
-# draw board
-def draw_board():
-    # clear screen
-    screen.fill(black)
-    for y in range(0, screen_y):
-        for x in range(0, screen_x):
-            # get color from tile
-            tile = board[x][y]
-            if tile == '': continue
-            elif tile == 'g': color = green
-            # draw rect
-            rect = ((x * grid, y * grid), (grid, grid))
-            pygame.draw.rect(screen, color, rect)
-    # update display
-    pygame.display.update()
+# initialize sub board
+sub_board = []
+for y in range(0, screen_y):
+    row = []
+    for x in range(0, screen_x):
+        row.append('g')
+    sub_board.append(row)
 
 # initialize board
 board = []
 for y in range(0, screen_y):
     row = []
     for x in range(0, screen_x):
-        row.append('g')
+        row.append('')
     board.append(row)
+
+# draws all boards
+def draw():
+    # clear screen
+    screen.fill(black)
+    for y in range(0, screen_y):
+        for x in range(0, screen_x):
+            # if tile empty, get sub tile
+            tile = board[x][y]
+            if tile == '':
+                # if sub tile empty, continue
+                tile = sub_board[x][y]
+                if tile == '': continue
+            # get color from tile
+            if tile == 'g': color = green # grass
+            elif tile == 'p': color = brown # player
+            # draw rect
+            rect = ((x * grid, y * grid), (grid, grid))
+            pygame.draw.rect(screen, color, rect)
+    # update display
+    pygame.display.update()
+
+### player ###
+
+# initialize player
+player_x = 0; player_y = 0
+board[player_x][player_y] = 'p'
+
+def move_player(x, y):
+    # return if out of bounds
+    if x <= 0: return
+    elif x >= screen_x - 1: return
+    if y <= 0: return
+    elif y >= screen_y - 1: return
+    # update board and player coordinates
+    board[player_x][player_y] = ''
+    player_x = x; player_y = y
+    board[player_x][player_y] = 'p'
 
 ### main ###
 
@@ -59,7 +90,7 @@ clock = pygame.time.Clock()
 frame = 0
 
 # before first frame
-draw_board()
+draw()
 
 # game loop
 while True:
@@ -79,6 +110,6 @@ while True:
     # update
     if frame % update == 0:
 
-        # draw board
-        draw_board()
+        # draw boards
+        draw()
     

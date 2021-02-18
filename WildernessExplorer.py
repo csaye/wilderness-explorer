@@ -10,6 +10,7 @@ screen_x = 32; screen_y = 32
 
 # game
 update = 5
+water = 30
 
 # colors
 white = (255, 255, 255)
@@ -37,25 +38,15 @@ map00 = import_map('00')
 
 ### screen ###
 
+# updates caption
+def update_caption():
+    caption = 'Water: ' + str(water)
+    pygame.display.set_caption(caption)
+
 # initialize screen
 screen_size = (screen_x * grid, screen_y * grid)
 screen = pygame.display.set_mode(screen_size)
-
-# set caption
-pygame.display.set_caption('Wilderness Explorer')
-
-### text ###
-
-# initialize text
-text = 'Water: 30'
-pygame.font.init()
-text_pos = (0, 0)
-roboto = pygame.font.SysFont('Roboto', 32)
-text_surface = roboto.render(text, False, red)
-
-def update_text():
-    text_surface = roboto.render(text, False, red)
-    screen.blit(text_surface, text_pos)
+update_caption()
 
 ### boards ###
 
@@ -89,8 +80,6 @@ def draw():
             # draw rect
             rect = ((x * grid, y * grid), (grid, grid))
             pygame.draw.rect(screen, color, rect)
-    # update text
-    update_text()
     # update display
     pygame.display.update()
 
@@ -108,7 +97,7 @@ def move_dir(direction):
     elif direction == 'l': move(player_x - 1, player_y)
 
 def move(x, y):
-    global player_x, player_y, can_move
+    global player_x, player_y, can_move, water
     # return if cannot move
     if not can_move: return
     # return if out of bounds
@@ -120,6 +109,11 @@ def move(x, y):
     board[player_x][player_y] = ''
     player_x = x; player_y = y
     board[player_x][player_y] = 'p'
+    # update water
+    if sub_board[player_x][player_y] == 'w':
+        water = 30
+    else:
+        water -= 1
     # update can move
     can_move = False
 
@@ -162,6 +156,9 @@ while True:
 
         # draw boards
         draw()
+
+        # update caption
+        update_caption()
 
         # reset player
         can_move = True

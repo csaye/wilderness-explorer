@@ -44,6 +44,19 @@ screen = pygame.display.set_mode(screen_size)
 # set caption
 pygame.display.set_caption('Wilderness Explorer')
 
+### text ###
+
+# initialize text
+text = 'Water: 30'
+pygame.font.init()
+text_pos = (0, 0)
+roboto = pygame.font.SysFont('Roboto', 32)
+text_surface = roboto.render(text, False, red)
+
+def update_text():
+    text_surface = roboto.render(text, False, red)
+    screen.blit(text_surface, text_pos)
+
 ### boards ###
 
 # initialize sub board
@@ -76,13 +89,15 @@ def draw():
             # draw rect
             rect = ((x * grid, y * grid), (grid, grid))
             pygame.draw.rect(screen, color, rect)
+    # update text
+    update_text()
     # update display
     pygame.display.update()
 
 ### player ###
 
 # initialize player
-player_x = 0; player_y = 0
+player_x = 1; player_y = screen_y - 2
 board[player_x][player_y] = 'p'
 can_move = True
 

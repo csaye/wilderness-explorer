@@ -19,6 +19,22 @@ green = (0, 191, 31)
 blue = (0, 0, 255)
 brown = (127, 63, 63)
 
+### maps ###
+
+def import_map(name):
+    map_lines = open('maps/' + name + '.txt').read().splitlines()
+    map_board = []
+    for y in range(0, screen_y):
+        row = []
+        for x in range(0, screen_x):
+            ch = map_lines[x][y]
+            row.append(ch)
+        map_board.append(row)
+    return map_board
+
+# maps
+map00 = import_map('00')
+
 ### screen ###
 
 # initialize screen
@@ -31,12 +47,7 @@ pygame.display.set_caption('Wilderness Explorer')
 ### boards ###
 
 # initialize sub board
-sub_board = []
-for y in range(0, screen_y):
-    row = []
-    for x in range(0, screen_x):
-        row.append('g')
-    sub_board.append(row)
+sub_board = map00
 
 # initialize board
 board = []
@@ -61,6 +72,7 @@ def draw():
             # get color from tile
             if tile == 'g': color = green # grass
             elif tile == 'p': color = brown # player
+            elif tile == 'w': color = blue # water
             # draw rect
             rect = ((x * grid, y * grid), (grid, grid))
             pygame.draw.rect(screen, color, rect)
